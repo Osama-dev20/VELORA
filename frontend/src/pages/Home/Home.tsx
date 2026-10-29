@@ -1,11 +1,11 @@
 import Hero from "../../components/Hero/Hero"; 
-import ProductCard from "../../components/ProductCard/ProductCard"
+import Studio from "../../components/Studio/Studio"
 
 const Home = () => {
   return (
     <div>
       <Hero />
-      <ProductCard />
+      <Studio />
       
     </div>
   )
