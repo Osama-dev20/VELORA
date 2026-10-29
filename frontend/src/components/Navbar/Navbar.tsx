@@ -13,8 +13,7 @@ import "./Navbar.css";
 
 const navLinks = [
   { label: "Home", path: "/" },
-  { label: "Categories", sectionId: "categories" },
-  { label: "Cards", sectionId: "cards" },
+  { label: "Shop", path: "/products" },
   { label: "VELORA Studio", sectionId: "studio", isStudio: true },
 ];
 
@@ -25,6 +24,12 @@ function Navbar() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  // "Shop" stays highlighted on /products and /products/:id
+  const isActive = (path: string) =>
+    path === "/"
+      ? location.pathname === "/" && !location.hash
+      : location.pathname.startsWith(path);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -136,10 +141,9 @@ function Navbar() {
                 key={link.label}
                 to={link.path!}
                 className={`navbar__link ${
-                  location.pathname === "/" && !location.hash
-                    ? "navbar__link--active"
-                    : ""
+                  isActive(link.path!) ? "navbar__link--active" : ""
                 }`}
+                aria-current={isActive(link.path!) ? "page" : undefined}
                 onClick={closeMenu}
               >
                 {link.label}
@@ -246,6 +250,7 @@ function Navbar() {
               to={link.path!}
               tabIndex={menuOpen ? 0 : -1}
               className="navbar__mobile-link"
+              aria-current={isActive(link.path!) ? "page" : undefined}
               onClick={closeMenu}
             >
               {link.label}
