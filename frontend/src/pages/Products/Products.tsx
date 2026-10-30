@@ -3,13 +3,14 @@ import { Link, useSearchParams } from "react-router-dom";
 
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
+import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
-// استيراد المنتجات مباشرة من ملف الـ assets (تأكد أن المسار دقيق حسب مكان ملفك الحالي)
 import { products } from "../../assets/frontend_assets/assets";
+import { useCart, type Product } from "../../context/CartContext";
 
 import "./Products.css";
 
-/* ---------- Types & Constants ---------- */
+/* ---------- Constants ---------- */
 
 const AUDIENCES = ["Men", "Women", "Kids", "Accessories"] as const;
 type Audience = (typeof AUDIENCES)[number];
@@ -22,17 +23,7 @@ const SORTS = [
 ] as const;
 type SortValue = (typeof SORTS)[number]["value"];
 
-// تعريف نوع المنتج محلياً لمنع أي خطأ استيراد للـ types
-type ProductItem = {
-  id: string;
-  name: string;
-  category: string;
-  audience: string;
-  image: string;
-  price: number;
-  badge?: string;
-  sizes?: string[];
-};
+type Item = Product;
 
 const prices = products.map((product) => product.price);
 const PRICE_MIN = prices.length > 0 ? Math.floor(Math.min(...prices)) : 0;
@@ -43,7 +34,7 @@ const countFor = (name: Audience | "All") =>
     ? products.length
     : products.filter((product) => product.audience === name).length;
 
-const matchesQuery = (product: ProductItem, query: string) => {
+const matchesQuery = (product: Item, query: string) => {
   if (!query) return true;
   const text =
     `${product.name} ${product.category} ${product.audience}`.toLowerCase();
@@ -55,6 +46,10 @@ const matchesQuery = (product: ProductItem, query: string) => {
 function Products() {
   const [params, setParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  // استخدام الـ Context الخاص بالسلة
+  const { addToCart } = useCart();
 
   const audienceParam = params.get("audience");
   const audience: Audience | "All" =
@@ -90,6 +85,16 @@ function Products() {
     (audience !== "All" ? 1 : 0) +
     activeCategories.length +
     (maxPrice < PRICE_MAX ? 1 : 0);
+
+  /* ---------- Cart Handler ---------- */
+
+  const handleAddToCart = (product: Item) => {
+    addToCart(product);
+    setNotification(`Added "${product.name}" to your bag!`);
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
 
   /* ---------- URL helpers ---------- */
 
@@ -137,7 +142,7 @@ function Products() {
 
   const results = useMemo(() => {
     const list = products.filter(
-      (product: ProductItem) =>
+      (product: Item) =>
         (audience === "All" || product.audience === audience) &&
         (categoryKey === "" || categoryKey.split(",").includes(product.category)) &&
         product.price <= maxPrice &&
@@ -163,6 +168,23 @@ function Products() {
   return (
     <div className="products">
       <div className="products__inner">
+        {/* Toast Notification */}
+        {notification && (
+          <div style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            background: "#111",
+            color: "#fff",
+            padding: "12px 20px",
+            borderRadius: "6px",
+            zIndex: 1000,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          }}>
+            {notification}
+          </div>
+        )}
+
         {/* Header */}
         <header className="products__header">
           <nav className="products__breadcrumb" aria-label="Breadcrumb">
@@ -240,7 +262,7 @@ function Products() {
           >
             <fieldset className="products__group">
               <legend className="products__legend">Collection</legend>
-              {(["All", ...AUDIENCES] as const).name?.length ?? (["All", ...AUDIENCES] as const).map((name) => (
+              {(["All", ...AUDIENCES] as const).map((name) => (
                 <label key={name} className="products__option">
                   <input
                     type="radio"
@@ -305,11 +327,33 @@ function Products() {
           <div className="products__results">
             {results.length > 0 ? (
               <div className="products__grid">
-                {results.map((product: ProductItem) => (
-                  <div key={product.id} className="product-card-fallback" style={{ border: "1px solid #ddd", padding: "15px", borderRadius: "8px", background: "#fff" }}>
-                    <img src={product.image} alt={product.name} style={{ width: "100%", height: "200px", objectFit: "cover", borderRadius: "4px" }} />
-                    <h3 style={{ fontSize: "16px", marginTop: "10px" }}>{product.name}</h3>
-                    <p style={{ fontWeight: "bold", color: "#333", marginTop: "5px" }}>${product.price}</p>
+                {results.map((product: Item) => (
+                  <div key={product.id} className="product-card-fallback" style={{ border: "1px solid #e5e7eb", padding: "12px", borderRadius: "8px", background: "#fff", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <img src={product.image} alt={product.name} style={{ width: "100%", height: "200px", objectFit: "cover", borderRadius: "6px" }} />
+                      <h3 style={{ fontSize: "15px", fontWeight: "600", marginTop: "10px" }}>{product.name}</h3>
+                      <p style={{ fontWeight: "700", color: "#111", marginTop: "4px" }}>${product.price}</p>
+                    </div>
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      style={{
+                        marginTop: "12px",
+                        background: "#000",
+                        color: "#fff",
+                        border: "none",
+                        padding: "10px",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                        fontSize: "14px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      <ShoppingBagOutlinedIcon fontSize="small" /> Add to Bag
+                    </button>
                   </div>
                 ))}
               </div>
