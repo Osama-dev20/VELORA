@@ -1,75 +1,52 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# VELORA
 
-Currently, two official plugins are available:
+**A Modern Fashion E-Commerce Website**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+VELORA is a modern fashion e-commerce website designed to provide a smooth and enjoyable shopping experience. Users can explore different clothing collections, browse products, filter by categories and prices, add items to their shopping bag, and complete their orders easily.
 
-## React Compiler
+## Screenshots
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<table align="center">
+  <tr>
+    <td colspan="2" align="center">
+      <img src="./frontend/src/assets/screenshots/Home.png" width="70%" alt="Home Page">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="./frontend/src/assets/screenshots/studio.png" width="100%" alt="Studio Page">
+    </td>
+    <td width="50%">
+      <img src="./frontend/src/assets/screenshots/shop.png" width="100%" alt="Shop Page">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="./frontend/src/assets/screenshots/cart.png" width="100%" alt="Shopping Bag">
+    </td>
+    <td width="50%">
+      <img src="./frontend/src/assets/screenshots/notFound.png" width="100%" alt="Not Found Page">
+    </td>
+  </tr>
+</table>
 
-## Expanding the ESLint configuration
+## How to Use
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Browse the available clothing collections.
+2. Explore products and apply filters.
+3. Add your favorite items to the shopping bag.
+4. Review your selected products and update quantities.
+5. Proceed to checkout and complete your order.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+git clone https://github.com/Osama-dev20/VELORA.git
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+cd VELORA/frontend
 
-```
+npm install
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+npm run dev
 ```
